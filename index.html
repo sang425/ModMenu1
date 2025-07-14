@@ -1,0 +1,613 @@
+
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<title>TTikai 888</title>
+<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+    }
+    .header {
+      background: linear-gradient(45deg, #4e00c2, #8e2de2);
+      padding: 20px;
+      text-align: center;
+      color: white;
+      border-bottom: 2px solid #333;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .header p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    .version {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #444;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .menu {
+      padding: 20px;
+    }
+    .item {
+      background: #2c2c2c;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: inset 0 0 2px #555;
+    }
+    .item-text {
+      max-width: 75%;
+    }
+    .item-title {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .item-desc {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #888;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #4CAF50;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  
+.rainbow {
+  background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowFlow 8s ease infinite;
+}
+@keyframes rainbowFlow {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+input[type="checkbox"]:active + .slider {
+  transform: scale(0.95);
+  box-shadow: 0 0 8px rgba(0,255,255,0.5);
+}
+.slider {
+  transition: all 0.2s ease;
+}
+
+.item {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 14px rgba(0, 255, 255, 0.2);
+}
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.light-mode body {
+  background: #f0f0f0;
+  color: #222;
+}
+.light-mode .header {
+  background: linear-gradient(45deg, #ffffff, #d1d1d1);
+  color: #000;
+}
+.light-mode .item {
+  background: #fff;
+  color: #111;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.light-mode .item-title {
+  color: #000;
+}
+.light-mode .item-desc {
+  color: #555;
+}
+.light-mode #themeBtn {
+  background: #ddd;
+  color: #000;
+}
+
+#gridBtn.active, #listBtn.active {
+  background: #7f4bff !important;
+  box-shadow: 0 0 10px rgba(127,75,255,0.6);
+}
+
+.toggle-check {
+  display: inline-block;
+  background: linear-gradient(145deg, #0f0, #0a0);
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 5px rgba(0,255,0,0.5);
+}
+
+@keyframes fadeSlideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+#toast {
+  animation: fadeSlideUp 0.4s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+</style>
+</head>
+<body>
+<div id="registerScreen" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99998;">
+<h2 style="color:white;margin-bottom:20px;">Đăng ký tài khoản</h2>
+<input id="regDisplay" placeholder="Tên hiển thị" style="padding:10px 14px;margin-bottom:10px;width:200px;border-radius:6px;border:none;" type="text"/>
+<input id="regEmail" placeholder="Email" style="padding:10px 14px;margin-bottom:10px;width:200px;border-radius:6px;border:none;" type="email"/>
+<input id="regConfirmPass" placeholder="Xác nhận mật khẩu" style="padding:10px 14px;margin-bottom:20px;width:200px;border-radius:6px;border:none;" type="password"/>
+<input id="regUser" placeholder="Tài khoản" style="padding:10px 14px;margin-bottom:10px;width:200px;border-radius:6px;border:none;" type="text"/>
+<input id="regPass" placeholder="Mật khẩu" style="padding:10px 14px;margin-bottom:20px;width:200px;border-radius:6px;border:none;" type="password"/>
+<select id="regAvatar" style="padding:10px;width:200px;border-radius:6px;margin-bottom:10px;">
+<option value="https://cdn-icons-png.flaticon.com/512/9131/9131529.png">Mặc định</option>
+<option value="https://cdn-icons-png.flaticon.com/512/4140/4140037.png">Nam 1</option>
+<option value="https://cdn-icons-png.flaticon.com/512/4140/4140047.png">Nữ 1</option>
+</select>
+<button onclick="registerAccount()" style="padding:10px 20px;border-radius:6px;background:#00aaff;color:white;border:none;font-weight:bold;">Đăng ký</button>
+<button onclick="cancelRegister()" style="margin-top:10px;padding:6px 14px;border:none;background:#555;color:white;border-radius:6px;">Quay lại đăng nhập</button>
+<p id="registerMessage" style="color:lime;margin-top:10px;display:none;">🎉 Đăng ký thành công!</p>
+</div>
+<div id="loginScreen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;">
+<h2 style="color:white;margin-bottom:20px;">Đăng nhập để vào TTikai 888</h2>
+<input id="username" placeholder="Tài khoản" style="padding:10px 14px;margin-bottom:10px;width:200px;border-radius:6px;border:none;" type="text"/>
+<input id="password" placeholder="Mật khẩu" style="padding:10px 14px;margin-bottom:20px;width:200px;border-radius:6px;border:none;" type="password"/>
+<button onclick="validateLogin()" style="padding:10px 20px;border-radius:6px;background:#7f4bff;color:white;border:none;font-weight:bold;">Đăng nhập</button>
+<p id="loginError" style="color:red;margin-top:10px;display:none;">Sai tài khoản hoặc mật khẩu!</p>
+<p style="color:white;margin-top:16px;font-size:13px;">Bạn chưa có tài khoản? <a href="#" onclick="document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; return false;" style="color:#00aaff;text-decoration:underline;">Nhấn vào đây để đăng ký</a></p>
+</div>
+<canvas id="rain" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></canvas>
+<div style="position: absolute; top: 20px; left: 20px; z-index:999;">
+<button id="themeBtn" onclick="toggleTheme()" style="background:#444;color:white;border:none;padding:6px 12px;border-radius:8px;font-size:12px;">
+    ☀️ Light Mode
+  </button>
+</div>
+<div style="position: absolute; top: 20px; right: 70px; display: flex; gap: 4px; background: #222;
+padding: 6px 10px; border-radius: 20px; z-index: 999;">
+<button id="gridBtn" onclick="setView('grid')" style="background: transparent; border: 2px solid #999; border-radius: 12px; padding: 6px; transition: all 0.2s ease;"><img src="https://img.icons8.com/ios-filled/20/ffffff/square.png"/></button>
+<button id="listBtn" onclick="setView('list')" style="background: transparent; border: 2px solid #999; border-radius: 12px; padding: 6px; transition: all 0.2s ease;"><img src="https://img.icons8.com/ios-filled/20/ffffff/menu.png"/></button>
+</div>
+<div class="header" style=";display:none">
+<h1 class="rainbow">TTikai 888</h1><p style="font-size: 10px; opacity: 0.8; margin-top: 4px;">Admin: Tran Dinh Khoi | Khoi its me</p>
+<p>POCTION YIUSOTER MOD GAME UNTINYVERYS</p>
+<div class="version">v2.5.0</div>
+</div>
+<div class="menu" style=";display:none">
+<div class="item">
+<div class="item-text">
+<div class="item-title">Aimbot</div>
+<div class="item-desc">Bám Đầu</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Fake Aim</div>
+<div class="item-desc">Nó Sẽ Fake Aim Và Antiban Hơn Thay Vì Dùng Aim</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Fake Aimlock</div>
+<div class="item-desc">Fake Aimlock Sẽ Antiban Hơn AimLock</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Buff Device</div>
+<div class="item-desc">Kéo Hiệu Năng Máy Lên Mức Tối Đa</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Buff Cấu Hình</div>
+<div class="item-desc">Kéo Tốc Độ Chạm Lên Mức Tối Đa</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Aim 360° (Chỉ VIP Mới Sử Dụng Được)</div>
+<div class="item-desc">Khi Bạn Đè Nút Bắn Tâm Sẽ Lia Địch Nói Ngắn Gọn Hơn Là Lia Tâm</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Nhẹ Tâm (Chỉ VIP Mới Sử Dụng Được)</div>
+<div class="item-desc">Làm Tâm Bạn Nhẹ Hơn</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+<div class="item">
+<div class="item-text">
+<div class="item-title">Activate Menu</div>
+<div class="item-desc">Kích Hoạt Cho Game</div>
+</div>
+<label class="switch"><input type="checkbox"/><span class="slider"></span></label>
+</div>
+</div>
+<style>
+.snowflake {
+  position: fixed;
+  top: -20px;
+  color: #fff;
+  font-size: 1.2em;
+  user-select: none;
+  pointer-events: none;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+</style>
+<div id="toast" style="display:none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.4); text-align: center; font-weight: 500;"><span id="toastText">Thông báo</span></div>
+<audio id="bgMusic" loop="">
+<source src="videoplayback_14072025.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggleBtn" onclick="toggleMusic()" style="position: fixed; bottom: 20px; left: 20px; z-index:999;
+  background: #444; color: #fff; border: none; border-radius: 10px;
+  padding: 8px 14px; font-size: 14px;">
+  🎵 Bật nhạc
+</button>
+<script>
+function toggleProfile() {
+  const popup = document.getElementById('profilePopup');
+  if (popup.style.display === 'none') {
+    const display = localStorage.getItem('ttikai_display') || 'Không rõ';
+    const user = localStorage.getItem('ttikai_user');
+    const role = (user === 'Tikai') ? 'VIP' : 'Basic';
+    document.getElementById('profileName').innerText = display;
+    document.getElementById('profileRole').innerText = role;
+    
+    const avatarURL = localStorage.getItem('ttikai_avatar');
+    document.getElementById('avatarBtn').querySelector('img').src = avatarURL || 'https://cdn-icons-png.flaticon.com/512/9131/9131529.png';
+    
+    document.getElementById('avatarBtn').querySelector('img').src = avatarURL || 'https://cdn-icons-png.flaticon.com/512/9131/9131529.png';
+    if (user === 'Tikai') {
+      document.getElementById('manageAccountsBtn').style.display = 'block';
+    } else {
+      document.getElementById('manageAccountsBtn').style.display = 'none';
+    }
+    popup.style.display = 'block';
+
+
+  } else {
+    popup.style.display = 'none';
+  }
+}
+
+
+function registerAccount() {
+  const user = document.getElementById('regUser').value.trim();
+  const pass = document.getElementById('regPass').value.trim();
+  const confirm = document.getElementById('regConfirmPass').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const display = document.getElementById('regDisplay').value.trim();
+
+  const msg = document.getElementById('registerMessage');
+
+  if (user.length < 3 || pass.length < 3 || confirm.length < 3 || email.length < 5 || display.length < 2) {
+    msg.style.color = 'red';
+    msg.innerText = '⚠️ Vui lòng điền đầy đủ thông tin!';
+    msg.style.display = 'block';
+    return;
+  }
+
+  if (pass !== confirm) {
+    msg.style.color = 'red';
+    msg.innerText = '⚠️ Mật khẩu xác nhận không khớp!';
+    msg.style.display = 'block';
+    return;
+  }
+
+  if (!email.includes("@") || !email.includes(".")) {
+    msg.style.color = 'red';
+    msg.innerText = '⚠️ Email không hợp lệ!';
+    msg.style.display = 'block';
+    return;
+  }
+
+  localStorage.setItem('ttikai_user', user);
+  localStorage.setItem('ttikai_pass', pass);
+  localStorage.setItem('ttikai_display', display);
+  const avatar = document.getElementById('regAvatar').value;
+  localStorage.setItem('ttikai_avatar', avatar);
+  localStorage.setItem('ttikai_email', email);
+
+  msg.innerText = '🎉 Đăng ký thành công!';
+  msg.style.color = 'lime';
+  msg.style.display = 'block';
+
+  setTimeout(() => {
+    document.getElementById('registerScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }, 1500);
+}
+function cancelRegister() {
+  document.getElementById('registerScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function validateLogin() {
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const savedUser = localStorage.getItem('ttikai_user');
+  const savedPass = localStorage.getItem('ttikai_pass');
+  if ((user === savedUser && pass === savedPass) || (user === 'Tikai' && pass === '888')) {
+    localStorage.setItem('ttikai_user', user);
+    localStorage.setItem('ttikai_pass', pass);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.querySelector('.header').style.display = 'block';
+    document.querySelector('.menu').style.display = 'block';
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const savedUser = localStorage.getItem('ttikai_user');
+  const savedPass = localStorage.getItem('ttikai_pass');
+  if (savedUser === 'admin' && savedPass === '888') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.querySelector('.header').style.display = 'block';
+    document.querySelector('.menu').style.display = 'block';
+  }
+});
+
+function validateLogin() {
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const savedUser = localStorage.getItem('ttikai_user');
+  const savedPass = localStorage.getItem('ttikai_pass');
+  if ((user === savedUser && pass === savedPass) || (user === 'Tikai' && pass === '888')) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.querySelector('.header').style.display = 'block';
+    document.querySelector('.menu').style.display = 'block';
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function showToast(text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').innerHTML = text;
+  toast.style.display = 'block';
+  clearTimeout(window._toastTimeout);
+  window._toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
+function toggleMusic() {
+  const audio = document.getElementById('bgMusic');
+  const btn = document.getElementById('musicToggleBtn');
+  if (audio.paused) {
+    audio.play().then(() => {
+      btn.innerText = "🔇 Tắt nhạc";
+    }).catch(e => {
+      showToast("⚠️ Trình duyệt chặn nhạc. Hãy bấm lại!");
+    });
+  } else {
+    audio.pause();
+    btn.innerText = "🎵 Bật nhạc";
+  }
+}
+
+function setView(type) {
+  const items = document.querySelectorAll('.item');
+  items.forEach(el => {
+    el.style.flexDirection = (type === 'list') ? 'row' : 'column';
+    const desc = el.querySelector('.item-desc');
+    if (desc) {
+      desc.style.display = (type === 'list') ? 'block' : 'none';
+    }
+  });
+  document.getElementById('gridBtn').classList.remove('active');
+  document.getElementById('listBtn').classList.remove('active');
+  document.getElementById(type + 'Btn').classList.add('active');
+}
+function toggleTheme() {
+  const bodyClass = document.body.classList;
+  const btn = document.getElementById('themeBtn');
+  if (bodyClass.contains('light-mode')) {
+    bodyClass.remove('light-mode');
+    btn.innerText = "☀️ Light Mode";
+  } else {
+    bodyClass.add('light-mode');
+    btn.innerText = "🌙 Dark Mode";
+  }
+}
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const label = cb.closest('.item').querySelector('.item-title')?.innerText || "Chức năng";
+      const status = cb.checked ? "Đã bật ✅" : "Đã tắt ❌";
+      showToast(label + " " + status);
+    });
+  });
+
+  const canvas = document.getElementById('rain');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let drops = [];
+  for (let i = 0; i < 300; i++) {
+    drops.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      l: Math.random() * 1,
+      xs: -2 + Math.random() * 4,
+      ys: Math.random() * 10 + 10
+    });
+  }
+  function drawRain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'rgba(174,194,224,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < drops.length; i++) {
+      const d = drops[i];
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x + d.l * d.xs, d.y + d.l * d.ys);
+    }
+    ctx.stroke();
+    moveRain();
+  }
+  function moveRain() {
+    for (let i = 0; i < drops.length; i++) {
+      const d = drops[i];
+      d.x += d.xs;
+      d.y += d.ys;
+      if (d.x > canvas.width || d.y > canvas.height) {
+        d.x = Math.random() * canvas.width;
+        d.y = -20;
+      }
+    }
+  }
+  setInterval(drawRain, 33);
+
+  function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.textContent = '❄';
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.animationDuration = 3 + Math.random() * 5 + 's';
+    document.body.appendChild(snowflake);
+    setTimeout(() => snowflake.remove(), 8000);
+  }
+  setInterval(createSnowflake, 300);
+});
+
+function logout() {
+  localStorage.removeItem('ttikai_user');
+  localStorage.removeItem('ttikai_pass');
+  localStorage.removeItem('ttikai_display');
+  localStorage.removeItem('ttikai_email');
+  localStorage.removeItem('ttikai_avatar');
+  location.reload();
+}
+
+function toggleAdminPanel() {
+  const panel = document.getElementById('adminPanel');
+  const list = document.getElementById('accountList');
+  if (panel.style.display === 'none') {
+    list.innerHTML = '';
+    const user = localStorage.getItem('ttikai_user') || 'admin';
+    const pass = localStorage.getItem('ttikai_pass');
+    const email = localStorage.getItem('ttikai_email');
+    const display = localStorage.getItem('ttikai_display');
+    const html = `
+      <div><strong>👤 Tài khoản:</strong> ${user}</div>
+      <div><strong>📧 Email:</strong> ${email}</div>
+      <div><strong>🧑 Tên:</strong> ${display}</div>
+      <div><strong>🔒 Mật khẩu:</strong> ${pass}</div>
+    `;
+    list.innerHTML = html;
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+function showGiftForm() {
+  document.getElementById('giftForm').style.display = 'block';
+}
+function redeemGift() {
+  const code = document.getElementById('giftCode').value.trim();
+  const msg = document.getElementById('giftMessage');
+  if (code === 'Wellcome') {
+    localStorage.setItem('ttikai_user', 'Tikai'); // gán quyền VIP
+    msg.innerText = "🎉 Nhận VIP thành công!";
+    msg.style.color = "green";
+  } else {
+    msg.innerText = "❌ Mã không đúng hoặc đã hết hạn.";
+    msg.style.color = "red";
+  }
+}
+</script>
+<div id="avatarBtn" onclick="toggleProfile()" style="position:fixed;top:20px;right:20px;z-index:9999;cursor:pointer;">
+<img height="40" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" style="border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,0.3);" width="40"/>
+</div>
+<div id="profilePopup" style="display:none;position:fixed;top:70px;right:20px;background:#fff;color:#000;border-radius:12px;padding:10px 16px;z-index:9999;box-shadow:0 0 10px rgba(0,0,0,0.3);min-width:160px;">
+<p style="margin:4px 0;"><strong>Tên:</strong> <span id="profileName">...</span></p>
+<p style="margin:4px 0;"><strong>Member:</strong> <span id="profileRole">...</span></p>
+<button onclick="logout()" style="margin-top:8px;padding:6px 12px;width:100%;background:#f33;color:white;border:none;border-radius:6px;cursor:pointer;">Đăng xuất</button>
+<button id="manageAccountsBtn" onclick="toggleAdminPanel()" style="margin-top:6px;padding:6px 12px;width:100%;background:#444;color:white;border:none;border-radius:6px;cursor:pointer;display:none;">Quản lý tài khoản</button>
+<button onclick="showGiftForm()" style="margin-top:6px;padding:6px 12px;width:100%;background:#0099ff;color:white;border:none;border-radius:6px;cursor:pointer;">🎁 Đổi Quà</button>
+
+</div>
+<div id="adminPanel" style="display:none;position:fixed;top:80px;right:200px;z-index:9999;background:white;color:black;border-radius:12px;padding:16px;box-shadow:0 0 10px rgba(0,0,0,0.3);min-width:260px;max-height:300px;overflow-y:auto;">
+<h4 style="margin-top:0;">👑 Quản lý tài khoản</h4>
+<div id="accountList" style="font-size:13px;"></div>
+</div>
+
+<div id="giftForm" style="display:none;position:fixed;top:100px;right:200px;z-index:9999;background:white;color:black;border-radius:12px;padding:16px;box-shadow:0 0 10px rgba(0,0,0,0.3);min-width:240px;">
+<h4 style="margin-top:0;">🎁 Nhập Mã VIP</h4>
+<input id="giftCode" placeholder="Nhập mã quà tặng..." style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;" type="text"/>
+<button onclick="redeemGift()" style="margin-top:10px;width:100%;padding:8px;background:#28a745;color:white;border:none;border-radius:6px;">Nhận VIP</button>
+<p id="giftMessage" style="font-size:13px;margin-top:8px;"></p>
+</div>
+</body>
+</html>
